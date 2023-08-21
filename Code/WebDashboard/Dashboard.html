@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="it">
+    <head>
+        <title>Intrusion Notifications</title>
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width initial-scale=1.00, maximum-scale=1.00, minimum-scale=1.00" />
+
+        <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+        <link href="style.css" rel="stylesheet" type="text/css">
+        <link rel="icon" href="images/webicon.ico" type="image/x-icon"/>
+    </head>
+
+    <body>
+    	<div class="main-container center">
+            <h1><img src="https://i.ibb.co/C8KwT73/notify.png" width="28px"> Intrusion Notifications</h1>
+            
+            <div class="notifications">
+                <table id="tabella">
+                    <thead>
+                        <tr>
+                            <th>Intrusion</th>
+                            <th>Type</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                  <tbody></tbody>
+				</table>
+            </div>
+        </div>
+    </body>
+    
+    <script>
+    $(document).ready(function()
+    {
+      var returnJSON = [];
+      const token = "pEw624Urc5zDDETiGu5gbJcnsVElszwsD16p6bIIC31i4zs0rxX3bGT9cZkz-Mcxc04CcC-GfVDIVEPbKKp0AA==";
+      const org = "University of Messina";
+      const bucket = "ArduinoData";
+
+      const url = `https://eu-central-1-1.aws.cloud2.influxdata.com/api/v2/query?org=${encodeURIComponent(org)}`;
+      const query = `from(bucket:"${bucket}") |> range(start: -30d) |> filter(fn: (r) => r["_measurement"] == "ArduinoData") |> sort(columns: ["_time"], desc: true)`;
+
+      const requestBody = JSON.stringify({
+        query: query
+      });
+
+      fetch(url, {
+        method: "POST",
+        headers: {
+          "Authorization": `Token ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: requestBody 
+      })
+        .then(response => response.text()) 
+        .then(data => {
+        var arrayData = data.split('\n');
+
+        var JSON = [];
+
+        // Skip the zero, because is the set of columns
+        for(var i=1; i<10; i++)
+        {
+          var thisData = arrayData[i].split(',');
+          var _time = thisData[5];
+          var intrusion = thisData[7];
+          var sensortype = thisData[6];
+
+          const dateObject = new Date(_time);
+          const year = dateObject.getUTCFullYear();
+          const month = String(dateObject.getUTCMonth() + 1).padStart(2, "0");
+          const day = String(dateObject.getUTCDate()).padStart(2, "0");
+          const hours = String(dateObject.getUTCHours()).padStart(2, "0");
+          const minutes = String(dateObject.getUTCMinutes()).padStart(2, "0");
+          const seconds = String(dateObject.getUTCSeconds()).padStart(2, "0");
+
+          // Formatting time
+          const time = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+          const date = new Date(time);
+          const timestamp = date.getTime() / 1000;
+          if(isNaN(timestamp)) break;
+          returnJSON[i-1] = { 'intrusion': intrusion, 'sensortype': sensortype, 'time': time, 'timestamp': timestamp };
+        }
+
+        console.log(returnJSON); 
+        
+        // Creating the table containing JSON object
+        var tabella = document.getElementById("tabella");
+        var tbody = tabella.querySelector("tbody");
+
+        returnJSON.forEach(function(item)
+        {
+            var riga = document.createElement("tr");
+            riga.innerHTML = "<td>" + item.intrusion + "</td><td>" + item.sensortype + "</td><td>" + item.time + "</td>";
+            tbody.appendChild(riga);
+        });
+      })
+      .catch(error => console.error("Errore:", error));
+    });
+    </script>
+</html>
