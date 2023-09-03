@@ -1,8 +1,10 @@
 import serial
+import requests
 import time
 import json
 import threading
 import random
+import datetime
 from Config import *
 from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
 from influxdb_client_3 import InfluxDBClient3, Point
@@ -56,6 +58,12 @@ def readArduinoValues():
                     )
                 client.write(database=Config.bucket, record=point)
 
+                # Sending email to the admins
+                current_time = datetime.datetime.now()
+                today = current_time.strftime('%d/%m/%Y %H:%M')
+                emailBody = f"An intrusion was detected by the {sensortype} sensor at {today}"
+                sendEmail(emailBody)
+
                 print(f"System status: INTRUSION DETECTED!")
             else:
                 print(f"System status: no events detected")
@@ -70,6 +78,16 @@ def readMessages(client, userdata, message):
     if received_message == "ENABLE_ALARM" or received_message == "DISABLE_ALARM" or received_message == "START_ALARM" or received_message == "STOP_ALARM":
         # Sending a welcome message to the board
         ser.write(received_message.encode())
+
+
+def sendEmail(body):
+    receivers = ",".join(Config.emails)
+    url = f'https://davideallegra.it/iot/sendEmail.php?receivers={receivers}&subject={Config.subject}&body={body}<br><br>'
+    response = requests.get(url)
+    if response.status_code == 200:
+        print(">> [Email] Intrusion notification via email successfully sent")
+    else:
+        print(response.text)
 
 
 thread = threading.Thread(target=readArduinoValues)
