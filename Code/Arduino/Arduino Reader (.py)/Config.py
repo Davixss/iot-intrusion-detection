@@ -13,3 +13,7 @@ class Config:
     org_influx = "University of Messina"
     host_influx = "https://eu-central-1-1.aws.cloud2.influxdata.com"
     bucket = "ArduinoData"
+
+    # Config emails
+    emails = ["davide.allegra@studenti.unime.it"]
+    subject = "Intrusion Notification"
