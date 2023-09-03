@@ -15,5 +15,5 @@ class Config:
     bucket = "ArduinoData"
 
     # Config emails
-    emails = ["davide.allegra@studenti.unime.it"]
+    emails = ["davide.allegra@studenti.unime.it", "cateno.dali@studenti.unime.it"]
     subject = "Intrusion Notification"
