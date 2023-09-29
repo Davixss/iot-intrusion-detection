@@ -82,7 +82,7 @@ def readMessages(client, userdata, message):
 
 def sendEmail(body):
     receivers = ",".join(Config.emails)
-    url = f'https://davideallegra.it/iot/sendEmail.php?receivers={receivers}&subject={Config.subject}&body={body}<br><br>'
+    url = f'{Config.altervista_host}/iot/sendEmail.php?receivers={receivers}&subject={Config.subject}&body={body}<br><br>'
     response = requests.get(url)
     if response.status_code == 200:
         print(">> [Email] Intrusion notification via email successfully sent")
