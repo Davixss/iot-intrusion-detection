@@ -14,6 +14,7 @@ class Config:
     host_influx = "https://eu-central-1-1.aws.cloud2.influxdata.com"
     bucket = "ArduinoData"
 
-    # Config emails
+    # Config altervista emails
+    altervista_host = "https://davideallegra.it"
     emails = ["davide.allegra@studenti.unime.it", "cateno.dali@studenti.unime.it"]
     subject = "Intrusion Notification"
