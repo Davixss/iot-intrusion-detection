@@ -20,6 +20,7 @@ ser = serial.Serial(serial_port, baud_rate)
 # MQTT topic
 sub_topic = "ArduinoSensors/sub"
 pub_topic = "ArduinoSensors/pub"
+QoS = 0
 
 # InfluxDB Connection
 client = InfluxDBClient3(host=Config.host_influx, token=Config.token_influx, org=Config.org_influx)
@@ -36,7 +37,7 @@ def readArduinoValues():
                     "message": "intrusion detected"
                 }
                 # Convert payload in JSON format
-                my_mqtt_client.publish(pub_topic, json.dumps(sensor_data), 1)
+                my_mqtt_client.publish(pub_topic, json.dumps(sensor_data), QoS)
 
                 # Simulating other sensors
                 types = ["Movement", "Noise", "Camera"]
@@ -105,7 +106,7 @@ try:
     print(">> MQTT broker connected")
 
     # Topic subscription
-    my_mqtt_client.subscribe(sub_topic, 1, readMessages)
+    my_mqtt_client.subscribe(sub_topic, QoS, readMessages)
     print(">> Client subscribed to ArduinoSensors topic")
 
     # To loop message broadcasting
