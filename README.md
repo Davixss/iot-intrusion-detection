@@ -1,5 +1,7 @@
 # iot-intrusion-detection
-University of Messina A.Y. 2023/2024 | Industrial IoT Project | Prof: Giovanni Merlino (giovanni.merlino@unime.it)
+University of Messina (www.unime.it) <br>
+A.Y. 2023/2024 <br>
+Industrial IoT Project | Prof: Giovanni Merlino (giovanni.merlino@unime.it) <br>
 
 # Project description
 The following project aims to develop an intrusion detection system for the Smart Industry, utilizing IoT
