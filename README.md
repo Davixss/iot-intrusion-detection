@@ -73,3 +73,7 @@ has been employed, with authentication through certificates.
      - Title: Set your own title (command)
      - MQTT Topic: Set your own MQTT Topic path
      - Message: {"message": "set your own message or command"}
+
+# Credits
+- Davide Giuseppe Allegra
+- Cateno Gabriele D'Alì
